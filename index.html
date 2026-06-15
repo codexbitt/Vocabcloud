@@ -2,13 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>⚡ Vocab Comic Cloud ⚡</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Caveat:wght@700&display=swap" rel="stylesheet">
-
     <style>
         :root {
             --bg: #fdf6e2;
@@ -18,21 +13,10 @@
             --dark: #2d3436;
             --cloud-bg: #74b9ff;
             --fav-cloud: #ff7675;
-            /* Mobile compatible professional comic fonts */
-            --font-main: 'Fredoka', sans-serif;
-            --font-comic: 'Caveat', cursive;
         }
 
-        * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
-            font-family: var(--font-main); 
-            -webkit-tap-highlight-color: transparent; /* Mobile touch highlight reset */
-        }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Comic Sans MS', 'Chalkboard SE', cursive, sans-serif; }
         html { scroll-behavior: smooth; }
-
         body { 
             background-color: var(--bg); 
             color: var(--dark); 
@@ -41,300 +25,89 @@
             background-size: 20px 20px;
         }
 
-        /* Comic Style Borders & Shadows */
         .comic-box {
             border: 3px solid var(--dark);
-            box-shadow: 4px 4px 0px var(--dark);
+            box-shadow: 5px 5px 0px var(--dark);
             border-radius: 12px;
         }
 
-        /* Floating Library Button - Mobile Responsive Position */
-        .controls { 
-            position: fixed; 
-            top: 15px; 
-            right: 15px; 
-            z-index: 100; 
-        }
+        .controls { position: fixed; top: 20px; right: 20px; z-index: 100; }
         .btn-library { 
             background: var(--secondary); 
             color: var(--dark); 
-            padding: 10px 18px; 
-            font-weight: 700; 
-            font-size: 15px;
+            padding: 12px 25px; 
+            font-weight: 900; 
+            font-size: 18px;
             cursor: pointer;
             transition: 0.2s;
         }
-        @media (min-width: 600px) {
-            .btn-library { padding: 12px 25px; font-size: 18px; }
-            .comic-box { box-shadow: 5px 5px 0px var(--dark); }
-        }
-        .btn-library:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px var(--dark); }
-        .btn-library:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0px var(--dark); }
+        .btn-library:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0px var(--dark); }
+        .btn-library:active { transform: translate(3px, 3px); box-shadow: 2px 2px 0px var(--dark); }
 
-        /* Views */
-        .view { display: none; padding: 15px; min-height: 100vh; }
+        .view { display: none; padding: 20px 20px; min-height: 100vh; }
         .view.active { display: block; }
 
-        /* Welcome Screen with Image Logo */
-        #home-view { 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            min-height: 100vh; 
-            text-align: center; 
-            padding: 20px;
-        }
+        #home-view { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center; }
+        .main-title { font-size: 3.5rem; text-transform: uppercase; background: var(--primary); padding: 10px 20px; transform: rotate(-2deg); margin-bottom: 50px; display: inline-block; }
+        .giant-plus { width: 120px; height: 120px; background: var(--accent); font-size: 70px; font-weight: bold; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; user-select: none; }
+        .giant-plus:hover { transform: scale(1.1) rotate(90deg); background: var(--primary); color: white; }
 
-        /* Responsive Mobile Logo Container */
-        .app-logo-container {
-            margin-bottom: 20px;
-            animation: floatLogo 3s ease-in-out infinite alternate;
-            cursor: pointer;
-            width: 100%;
-            max-width: 220px;
-        }
-        .app-logo {
-            width: 100%;
-            height: auto;
-            display: block;
-            border: 3px solid var(--dark);
-            box-shadow: 5px 5px 0px var(--dark);
-            background-color: #fff;
-            border-radius: 20px;
-            padding: 8px;
-        }
-        
-        .main-title {
-            font-size: 2.2rem;
-            text-transform: uppercase;
-            background: var(--primary);
-            padding: 8px 16px;
-            transform: rotate(-2deg);
-            margin-bottom: 30px;
-            display: inline-block;
-            font-weight: 700;
-        }
-        @media (min-width: 600px) {
-            .main-title { font-size: 3.5rem; margin-bottom: 40px; }
-            .app-logo-container { max-width: 280px; }
-        }
-
-        .giant-plus {
-            width: 90px;
-            height: 90px;
-            background: var(--accent);
-            font-size: 50px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: 0.2s;
-            user-select: none;
-        }
-        @media (min-width: 600px) {
-            .giant-plus { width: 120px; height: 120px; font-size: 70px; }
-        }
-        .giant-plus:hover {
-            transform: scale(1.05) rotate(90deg);
-            background: var(--primary);
-            color: white;
-        }
-
-        /* Modal / Pop-up Form Container - Scrollable on small phones */
-        .modal-overlay { 
-            display: none; 
-            position: fixed; 
-            top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.7); 
-            z-index: 200; 
-            align-items: center; 
-            justify-content: center;
-            padding: 10px;
-        }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 200; align-items: center; justify-content: center; }
         .modal-overlay.active { display: flex; }
-        
-        .form-container { 
-            background: white; 
-            width: 100%; 
-            max-width: 500px; 
-            padding: 20px; 
-            max-height: 95vh;
-            overflow-y: auto;
-            position: relative;
-        }
-        @media (min-width: 600px) {
-            .form-container { padding: 30px; }
-        }
-        
-        .close-form {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 28px;
-            cursor: pointer;
-            font-weight: bold;
-        }
+        .form-container { background: white; width: 90%; max-width: 550px; padding: 30px; max-height: 90vh; overflow-y: auto; position: relative; }
+        .close-form { position: absolute; top: 15px; right: 20px; font-size: 30px; cursor: pointer; font-weight: bold; }
 
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: 700; font-size: 14px; text-transform: uppercase;}
-        .form-group input { 
-            width: 100%; padding: 10px; border-radius: 8px; 
-            border: 2px solid var(--dark); background: #fff; 
-            color: var(--dark); font-size: 15px; 
-        }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: bold; font-size: 16px; text-transform: uppercase;}
+        .form-group input { width: 100%; padding: 12px; border-radius: 8px; border: 2px solid var(--dark); background: #fff; color: var(--dark); font-size: 16px; }
         .form-group input:focus { background: var(--accent); outline: none; }
 
-        /* Tags Box Style */
-        .tags-input-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            padding: 6px;
-            border: 2px solid var(--dark);
-            background: white;
-            border-radius: 8px;
-            min-height: 42px;
-        }
-        .tags-input-container input {
-            border: none !important;
-            flex: 1;
-            padding: 4px !important;
-            min-width: 80px;
-        }
+        .tags-input-container { display: flex; flex-wrap: wrap; gap: 8px; padding: 8px; border: 2px solid var(--dark); background: white; border-radius: 8px; min-height: 45px; }
+        .tags-input-container input { border: none !important; flex: 1; padding: 4px !important; min-width: 100px; }
         .tags-input-container input:focus { background: none; }
-        .tag-chip {
-            background: var(--accent);
-            border: 1.5px solid var(--dark);
-            padding: 3px 8px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 13px;
-            font-weight: 600;
-        }
+        .tag-chip { background: var(--accent); border: 1.5px solid var(--dark); padding: 4px 10px; border-radius: 20px; display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: bold; }
+        .tag-chip span { cursor: pointer; color: var(--primary); font-size: 16px; }
 
-        .btn-save {
-            width: 100%;
-            background: var(--cloud-bg);
-            padding: 12px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 5px;
-        }
+        .btn-save { width: 100%; background: var(--cloud-bg); padding: 15px; font-size: 20px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .btn-save:hover { background: #4a90e2; color: white; }
 
-        /* Library Section */
-        .clouds-grid { display: flex; flex-wrap: wrap; gap: 25px; justify-content: center; padding-top: 60px; }
-        @media (min-width: 600px) { .clouds-grid { gap: 40px; padding-top: 20px; } }
-        
-        /* Interactive Mobile Scaled Cloud Cluster */
-        .word-cloud-cluster { 
-            background: white; 
-            width: 280px; 
-            height: 280px; 
-            border-radius: 50%; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            position: relative; 
-            cursor: pointer; 
-            transition: 0.3s; 
-            border: 3px solid var(--dark);
-            box-shadow: 6px 6px 0px rgba(0,0,0,0.15);
-            background-image: radial-gradient(#e0f0ff 20%, transparent 20%);
-            background-size: 10px 10px;
-        }
-        @media (min-width: 600px) {
-            .word-cloud-cluster { width: 320px; height: 320px; }
-        }
-        .word-cloud-cluster:hover { 
-            transform: scale(1.02) rotate(1deg); 
-            box-shadow: 8px 8px 0px var(--dark);
-        }
+        .clouds-grid { display: flex; flex-wrap: wrap; gap: 40px; justify-content: center; padding-top: 20px; }
+        .word-cloud-cluster { background: white; width: 320px; height: 320px; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; transition: 0.3s; border: 3px solid var(--dark); box-shadow: 8px 8px 0px rgba(0,0,0,0.15); background-image: radial-gradient(#e0f0ff 20%, transparent 20%); background-size: 10px 10px; }
+        .word-cloud-cluster:hover { transform: scale(1.05) rotate(1deg); box-shadow: 12px 12px 0px var(--dark); }
 
-        .word-cloud-cluster.is-favorite {
-            background-color: #ffe0e0;
-            background-image: radial-gradient(var(--primary) 15%, transparent 16%);
-            background-size: 12px 12px;
-            border-color: var(--primary);
-        }
-        .word-cloud-cluster.is-favorite .main-word {
-            background: var(--accent);
-            border-color: var(--primary);
-        }
+        .word-cloud-cluster.is-favorite { background-color: #ffe0e0; background-image: radial-gradient(var(--primary) 15%, transparent 16%); background-size: 12px 12px; border-color: var(--primary); }
+        .word-cloud-cluster.is-favorite .main-word { background: var(--accent); border-color: var(--primary); }
 
-        .fav-star {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            font-size: 24px;
-            color: #ccc;
-            z-index: 15;
-            cursor: pointer;
-        }
-        .word-cloud-cluster.is-favorite .fav-star {
-            color: #f1c40f;
-            text-shadow: 2px 2px 0px var(--dark);
-        }
+        .fav-star { position: absolute; top: 20px; right: 25px; font-size: 26px; color: #ccc; z-index: 15; transition: 0.2s; cursor: pointer; }
+        .fav-star:hover { transform: scale(1.2); }
+        .word-cloud-cluster.is-favorite .fav-star { color: #f1c40f; text-shadow: 2px 2px 0px var(--dark); }
         
         .cloud-content { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+        .main-word { font-size: 32px; font-weight: 900; color: var(--dark); z-index: 10; text-align: center; max-width: 160px; background: var(--secondary); padding: 5px 10px; border: 2px solid var(--dark); transform: skewX(-5deg); }
         
-        .main-word { 
-            font-size: 26px; 
-            font-weight: 700; 
-            color: var(--dark); 
-            z-index: 10; 
-            text-align: center; 
-            max-width: 140px;
-            background: var(--secondary);
-            padding: 4px 8px;
-            border: 2px solid var(--dark);
-            transform: skewX(-5deg);
-        }
-        @media (min-width: 600px) {
-            .main-word { font-size: 32px; max-width: 160px; }
-        }
+        .synonym-tag { position: absolute; font-weight: bold; white-space: nowrap; background: white; border: 1.5px solid var(--dark); padding: 2px 6px; border-radius: 4px; box-shadow: 2px 2px 0 var(--dark);}
         
-        /* Scatter Positioning with Priority Sizing */
-        .synonym-tag { position: absolute; font-weight: 600; white-space: nowrap; background: white; border: 1.5px solid var(--dark); padding: 2px 6px; border-radius: 4px; box-shadow: 1.5px 1.5px 0 var(--dark);}
-        
-        /* Mobile-optimized cloud scatter coordinates */
-        .priority-0 { top: 35px; left: 50%; transform: translateX(-50%); font-size: 15px; background: var(--accent); z-index: 5; }
-        .priority-1 { bottom: 35px; left: 50%; transform: translateX(-50%); font-size: 14px; background: #ffbe76; z-index: 5; }
-        .priority-2 { left: 10px; top: 38%; font-size: 13px; }
-        .priority-3 { right: 10px; top: 52%; font-size: 13px; }
-        .priority-4 { top: 20px; left: 20px; font-size: 11px; opacity: 0.8; }
-        .priority-5 { bottom: 20px; right: 20px; font-size: 10px; opacity: 0.7; }
+        .priority-0 { top: 45px; left: 50%; transform: translateX(-50%); font-size: 18px; background: var(--accent); z-index: 5; }
+        .priority-1 { bottom: 45px; left: 50%; transform: translateX(-50%); font-size: 16px; background: #ffbe76; z-index: 5; }
+        .priority-2 { left: 15px; top: 40%; font-size: 15px; }
+        .priority-3 { right: 15px; top: 55%; font-size: 14px; }
+        .priority-4 { top: 25px; left: 25px; font-size: 12px; opacity: 0.8; }
+        .priority-5 { bottom: 25px; right: 25px; font-size: 11px; opacity: 0.7; }
 
-        @media (min-width: 600px) {
-            .priority-0 { top: 45px; font-size: 18px; }
-            .priority-1 { bottom: 45px; font-size: 16px; }
-            .priority-2 { left: 15px; font-size: 15px; }
-            .priority-3 { right: 15px; font-size: 14px; }
-        }
-
-        /* Detail Display Modal */
-        .detail-modal { 
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.8); z-index: 300; align-items: center; justify-content: center; 
-            padding: 15px;
-        }
+        .detail-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 300; align-items: center; justify-content: center; }
         .detail-modal.active { display: flex; }
-        .detail-content { 
-            background: #fff; width: 100%; max-width: 480px; padding: 25px; position: relative; 
-            transform: rotate(0.5deg); background-image: repeating-linear-gradient(#fff, #fff 24px, #e0f0ff 25px); line-height: 25px;
-        }
-        .detail-word { font-size: 28px; font-weight: 700; color: white; background: var(--primary); padding: 4px 12px; display: inline-block; margin-bottom: 15px; border: 2px solid var(--dark); box-shadow: 3px 3px 0 var(--dark); }
-        .detail-sec { margin-bottom: 15px; background: rgba(255,255,255,0.9); padding: 8px; border-radius: 8px; border: 2px solid var(--dark); }
-        .detail-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #7f8c8d; margin-bottom: 3px; }
-        .detail-val { font-size: 16px; color: var(--dark); font-weight: 600; }
+        .detail-content { background: #fff; width: 90%; max-width: 500px; padding: 35px; position: relative; transform: rotate(1deg); background-image: repeating-linear-gradient(#fff, #fff 24px, #e0f0ff 25px); line-height: 25px; }
+        .detail-word { font-size: 36px; font-weight: 900; color: white; background: var(--primary); padding: 5px 15px; display: inline-block; margin-bottom: 20px; border: 3px solid var(--dark); box-shadow: 4px 4px 0 var(--dark); }
+        .detail-sec { margin-bottom: 20px; background: rgba(255,255,255,0.9); padding: 10px; border-radius: 8px; border: 2px solid var(--dark); }
+        .detail-label { font-size: 13px; font-weight: 900; text-transform: uppercase; color: #7f8c8d; margin-bottom: 5px; }
+        .detail-val { font-size: 18px; color: var(--dark); font-weight: bold; }
 
-        .loader { display: none; text-align: center; font-size: 18px; font-weight: bold; margin-top: 15px; padding: 15px; background: var(--accent); border: 2px dashed var(--dark); display: inline-block; }
+        /* Dynamic Edit Layout Inner Styling */
+        .editable-input { width: 100%; padding: 6px; font-size: 16px; font-weight: bold; border: 2px dashed var(--primary); background: #fffdf3; margin-top: 5px; }
+        .btn-edit-toggle { background: var(--accent); color: var(--dark); padding: 8px 15px; font-size: 16px; font-weight: bold; cursor: pointer; float: right; margin-top: -10px; margin-right: 20px; }
+
+        .loader { display: none; text-align: center; font-size: 22px; font-weight: bold; margin-top: 15px; padding: 20px; background: var(--accent); border: 3px dashed var(--dark); display: inline-block; }
     </style>
-    <link rel="icon" type="image/png" href="logo.png">
 </head>
 <body>
 
@@ -343,19 +116,15 @@
     </div>
 
     <div id="home-view" class="view active">
-        <div class="app-logo-container" onclick="openFormModal()">
-            <img src="logo.png" alt="Vocab Studio Logo" class="app-logo" onerror="this.style.display='none';">
-        </div>
-        
         <div class="comic-box main-title">Vocab Cloud Studio</div>
-        <p style="margin-bottom: 25px; font-size: 16px; font-weight: bold;">Click PLUS to unleash a new word! 👇</p>
+        <p style="margin-bottom: 30px; font-size: 18px; font-weight: bold;">Click PLUS to unleash a new word! 👇</p>
         <div class="comic-box giant-plus" onclick="openFormModal()">+</div>
     </div>
 
     <div id="formModal" class="modal-overlay" onclick="closeFormModal(event)">
         <div class="comic-box form-container" onclick="event.stopPropagation()">
             <span class="close-form" onclick="closeFormModal(null)">&times;</span>
-            <h2 style="margin-bottom: 20px; text-transform: uppercase; background: var(--accent); padding: 5px; display:inline-block; font-size: 18px;" class="comic-box">💥 Add New Word 💥</h2>
+            <h2 style="margin-bottom: 25px; text-transform: uppercase; background: var(--accent); padding: 5px; display:inline-block;" class="comic-box">💥 Add New Word 💥</h2>
             
             <div class="form-group">
                 <label>Main Word (English)</label>
@@ -367,14 +136,14 @@
             </div>
             
             <div class="form-group">
-                <label>Synonyms (Press Enter or Comma)</label>
+                <label>Synonyms (Type & press Enter or Comma)</label>
                 <div class="tags-input-container" id="synonymsContainer">
                     <input type="text" id="synonymInput" placeholder="Add synonym...">
                 </div>
             </div>
 
             <div class="form-group">
-                <label>Antonyms (Press Enter or Comma)</label>
+                <label>Antonyms (Type & press Enter or Comma)</label>
                 <div class="tags-input-container" id="antonymsContainer">
                     <input type="text" id="antonymInput" placeholder="Add antonym...">
                 </div>
@@ -386,8 +155,8 @@
     </div>
 
     <div id="library-view" class="view">
-        <h2 style="text-align: center; margin-bottom: 25px; font-size: 24px;"><span style="background:var(--accent); padding: 5px 12px;" class="comic-box">☁️ YOUR VOCAB CLOUDS ☁️</span></h2>
-        <div style="text-align: center; margin-bottom: 15px;">
+        <h2 style="text-align: center; margin-bottom: 20px; font-size: 32px;"><span style="background:var(--accent); padding: 5px 15px;" class="comic-box">☁️ YOUR VOCAB CLOUDS ☁️</span></h2>
+        <div style="text-align: center; margin-bottom: 20px;">
             <div id="fetch-loader" class="loader" style="display: block;">Summoning your cloud kingdom... 🌩️</div>
         </div>
         <div class="clouds-grid" id="cloudsContainer"></div>
@@ -396,6 +165,9 @@
     <div id="detailModal" class="detail-modal" onclick="closeDetailModal(event)">
         <div class="comic-box detail-content" onclick="event.stopPropagation()">
             <span class="close-form" onclick="document.getElementById('detailModal').classList.remove('active')">&times;</span>
+            
+            <button id="editBtn" class="comic-box btn-edit-toggle" onclick="toggleEditMode()">✏️ EDIT</button>
+            
             <div class="detail-word" id="m-word">Word</div>
             
             <div class="detail-sec">
@@ -410,15 +182,23 @@
                 <div class="detail-label">🥊 Antonyms</div>
                 <div class="detail-val" id="m-antonyms">...</div>
             </div>
+
+            <button id="updateSubmitBtn" class="comic-box btn-save" style="display:none;" onclick="submitWordEdit()">💥 UPDATE CLOUD 💥</button>
+            <div id="edit-loader" class="loader" style="display:none; font-size: 16px; padding: 10px; width:100%;">Updating Sheet Matrix... ⚡</div>
         </div>
     </div>
 
     <script>
+        // Apna fresh Apps Script URL yahan check kar lena
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCBluLaI9rqNSAsfW_6cdWCyZ1-0ARLNpsBGxpvSg_Vfub3wwk_2VoSeus0U0ecpdq/exec";
         
         let activeSynonyms = [];
         let activeAntonyms = [];
         let favoritesList = JSON.parse(localStorage.getItem('vocab_favs')) || [];
+        
+        // Track unique reference for tracking row edits
+        let currentEditingWordRaw = ""; 
+        let isEditStateActive = false;
 
         function showView(viewId) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -511,28 +291,19 @@
                 activeAntonyms = [];
                 synSys.render();
                 antSys.render();
-                
                 closeFormModal(null);
                 loadLibrary();
             })
-            .catch(err => {
-                console.error(err);
-                document.getElementById('save-loader').style.display = 'none';
-            });
+            .catch(err => console.error(err));
         }
 
         function toggleFavorite(e, word) {
             e.stopPropagation();
             const index = favoritesList.indexOf(word);
-            if (index > -1) {
-                favoritesList.splice(index, 1);
-            } else {
-                favoritesList.push(word);
-            }
+            if (index > -1) { favoritesList.splice(index, 1); } 
+            else { favoritesList.push(word); }
             localStorage.setItem('vocab_favs', JSON.stringify(favoritesList));
-            
-            const cluster = e.target.closest('.word-cloud-cluster');
-            cluster.classList.toggle('is-favorite');
+            e.target.closest('.word-cloud-cluster').classList.toggle('is-favorite');
         }
 
         function loadLibrary() {
@@ -543,14 +314,11 @@
             loader.style.display = 'inline-block';
 
             fetch(SCRIPT_URL, { cache: 'no-store' })
-            .then(res => {
-                if (!res.ok) throw new Error('Error');
-                return res.json();
-            })
+            .then(res => res.json())
             .then(data => {
                 loader.style.display = 'none';
                 if(data.length === 0) {
-                    container.innerHTML = "<p style='font-weight:bold; font-size:18px;'>Library khali hai! Jaldi se '+' daba kar ek cloud banao. ☁️</p>";
+                    container.innerHTML = "<p style='font-weight:bold; font-size:20px;'>Library khali hai! 👇</p>";
                     return;
                 }
 
@@ -579,18 +347,96 @@
             })
             .catch(err => {
                 loader.style.display = 'none';
-                container.innerHTML = "<p style='color:red; font-size:16px; font-weight:bold;'>Bad news! Network connection issue hai, please dobara try karein.</p>";
                 console.error(err);
             });
         }
 
         function showDetails(item) {
-            document.getElementById('m-word').innerText = item.word;
-            document.getElementById('m-meaning').innerText = item.meaning || "---";
-            document.getElementById('m-synonyms').innerText = item.synonyms || "---";
-            document.getElementById('m-antonyms').innerText = item.antonyms || "---";
+            // Reset state parameters
+            isEditStateActive = false;
+            document.getElementById('editBtn').innerText = "✏️ EDIT";
+            document.getElementById('updateSubmitBtn').style.display = 'none';
+
+            currentEditingWordRaw = item.word;
+            
+            document.getElementById('m-word').innerHTML = item.word;
+            document.getElementById('m-meaning').innerHTML = item.meaning || "---";
+            document.getElementById('m-synonyms').innerHTML = item.synonyms || "---";
+            document.getElementById('m-antonyms').innerHTML = item.antonyms || "---";
             
             document.getElementById('detailModal').classList.add('active');
+        }
+
+        // Inline Editor Mode Toggle
+        function toggleEditMode() {
+            if (!isEditStateActive) {
+                // Switch to Edit Interface
+                isEditStateActive = true;
+                document.getElementById('editBtn').innerText = "❌ CANCEL";
+                document.getElementById('updateSubmitBtn').style.display = 'block';
+
+                const currentWord = document.getElementById('m-word').innerText;
+                const currentMeaning = document.getElementById('m-meaning').innerText;
+                const currentSynonyms = document.getElementById('m-synonyms').innerText;
+                const currentAntonyms = document.getElementById('m-antonyms').innerText;
+
+                document.getElementById('m-word').innerHTML = `<input type="text" id="edit-i-word" class="editable-input" value="${currentWord}">`;
+                document.getElementById('m-meaning').innerHTML = `<input type="text" id="edit-i-meaning" class="editable-input" value="${currentMeaning === '---' ? '' : currentMeaning}">`;
+                document.getElementById('m-synonyms').innerHTML = `<input type="text" id="edit-i-synonyms" class="editable-input" value="${currentSynonyms === '---' ? '' : currentSynonyms}" placeholder="Comma separated strings">`;
+                document.getElementById('m-antonyms').innerHTML = `<input type="text" id="edit-i-antonyms" class="editable-input" value="${currentAntonyms === '---' ? '' : currentAntonyms}" placeholder="Comma separated strings">`;
+            } else {
+                // Cancel operation - just re-fetch details safely
+                isEditStateActive = false;
+                document.getElementById('detailModal').classList.remove('active');
+            }
+        }
+
+        // Submit Inline Edit Data payload directly to Sheet Row
+        function submitWordEdit() {
+            const upWord = document.getElementById('edit-i-word').value.trim();
+            const upMeaning = document.getElementById('edit-i-meaning').value.trim();
+            const upSynonyms = document.getElementById('edit-i-synonyms').value.trim();
+            const upAntonyms = document.getElementById('edit-i-antonyms').value.trim();
+
+            if(!upWord || !upMeaning) {
+                alert("Word aur Meaning khali nahi ho sakte!");
+                return;
+            }
+
+            document.getElementById('edit-loader').style.display = 'block';
+
+            const payload = {
+                action: "edit",
+                oldWord: currentEditingWordRaw,
+                word: upWord,
+                meaning: upMeaning,
+                synonyms: upSynonyms,
+                antonyms: upAntonyms
+            };
+
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            })
+            .then(() => {
+                document.getElementById('edit-loader').style.display = 'none';
+                document.getElementById('detailModal').classList.remove('active');
+                
+                // If favorite array contained old word string structure, update reference sync key
+                const favIndex = favoritesList.indexOf(currentEditingWordRaw);
+                if (favIndex > -1) {
+                    favoritesList[favIndex] = upWord;
+                    localStorage.setItem('vocab_favs', JSON.stringify(favoritesList));
+                }
+
+                loadLibrary(); // Reload list matrix instantly
+            })
+            .catch(err => {
+                console.error(err);
+                document.getElementById('edit-loader').style.display = 'none';
+            });
         }
 
         function closeDetailModal(e) {
