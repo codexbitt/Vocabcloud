@@ -12,7 +12,7 @@
             --accent: #ffeaa7;
             --dark: #2d3436;
             --cloud-bg: #74b9ff;
-            --fav-cloud: #ff7675; /* Favorite cloud ka alag special color */
+            --fav-cloud: #ff7675;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Comic Sans MS', 'Chalkboard SE', cursive, sans-serif; }
@@ -52,7 +52,7 @@
         .view { display: none; padding: 20px 20px; min-height: 100vh; }
         .view.active { display: block; }
 
-        /* Welcome Screen with Giant Center Plus */
+        /* Welcome Screen with Image Logo & Giant Center Plus */
         #home-view { 
             display: flex; 
             flex-direction: column; 
@@ -61,6 +61,28 @@
             height: 100vh; 
             text-align: center; 
         }
+
+        /* Naya Image Logo Style (Comic Float Animation) */
+        .app-logo-container {
+            margin-bottom: 25px;
+            animation: floatLogo 3s ease-in-out infinite alternate;
+            cursor: pointer;
+        }
+        .app-logo {
+            max-width: 180px; /* Logo ka size yahan se adjust kar sakte hain */
+            height: auto;
+            display: block;
+            border: 4px solid var(--dark);
+            box-shadow: 6px 6px 0px var(--dark);
+            background-color: #fff;
+            border-radius: 20px;
+            padding: 10px;
+            transition: 0.2s;
+        }
+        .app-logo-container:hover .app-logo {
+            transform: scale(1.05) rotate(-2deg);
+            box-shadow: 9px 9px 0px var(--dark);
+        }
         
         .main-title {
             font-size: 3.5rem;
@@ -68,7 +90,7 @@
             background: var(--primary);
             padding: 10px 20px;
             transform: rotate(-2deg);
-            margin-bottom: 50px;
+            margin-bottom: 40px;
             display: inline-block;
         }
 
@@ -198,7 +220,6 @@
             box-shadow: 12px 12px 0px var(--dark);
         }
 
-        /* Favorite State Classes */
         .word-cloud-cluster.is-favorite {
             background-color: #ffe0e0;
             background-image: radial-gradient(var(--primary) 15%, transparent 16%);
@@ -210,7 +231,6 @@
             border-color: var(--primary);
         }
 
-        /* Favorite Star Button */
         .fav-star {
             position: absolute;
             top: 20px;
@@ -268,7 +288,14 @@
         .detail-val { font-size: 18px; color: var(--dark); font-weight: bold; }
 
         .loader { display: none; text-align: center; font-size: 22px; font-weight: bold; margin-top: 15px; padding: 20px; background: var(--accent); border: 3px dashed var(--dark); display: inline-block; }
+
+        /* Floating Logo Keyframe Animation */
+        @keyframes floatLogo {
+            0% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(-12px) rotate(1deg); }
+        }
     </style>
+    <link rel="icon" type="image/png" href="logo.png">
 </head>
 <body>
 
@@ -277,6 +304,10 @@
     </div>
 
     <div id="home-view" class="view active">
+        <div class="app-logo-container" onclick="openFormModal()">
+            <img src="logo.png" alt="Vocab Studio Logo" class="app-logo" onerror="this.style.display='none';">
+        </div>
+        
         <div class="comic-box main-title">Vocab Cloud Studio</div>
         <p style="margin-bottom: 30px; font-size: 18px; font-weight: bold;">Click PLUS to unleash a new word! 👇</p>
         <div class="comic-box giant-plus" onclick="openFormModal()">+</div>
@@ -348,8 +379,6 @@
         
         let activeSynonyms = [];
         let activeAntonyms = [];
-
-        // Local storage for keeping track of favorites across sessions
         let favoritesList = JSON.parse(localStorage.getItem('vocab_favs')) || [];
 
         function showView(viewId) {
@@ -369,7 +398,6 @@
             }
         }
 
-        // Tags Setup Logic
         function setupTagsSystem(inputId, containerId, targetArray) {
             const input = document.getElementById(inputId);
             const container = document.getElementById(containerId);
@@ -412,7 +440,6 @@
         const synSys = setupTagsSystem('synonymInput', 'synonymsContainer', activeSynonyms);
         const antSys = setupTagsSystem('antonymInput', 'antonymsContainer', activeAntonyms);
 
-        // Save Word
         function saveWord() {
             const word = document.getElementById('word').value.trim();
             const meaning = document.getElementById('meaning').value.trim();
@@ -455,9 +482,8 @@
             });
         }
 
-        // Toggle Favorite function
         function toggleFavorite(e, word) {
-            e.stopPropagation(); // Prevents opening detail modal when clicking star
+            e.stopPropagation();
             const index = favoritesList.indexOf(word);
             if (index > -1) {
                 favoritesList.splice(index, 1);
@@ -466,12 +492,10 @@
             }
             localStorage.setItem('vocab_favs', JSON.stringify(favoritesList));
             
-            // Re-render to show updated colors instantly
             const cluster = e.target.closest('.word-cloud-cluster');
             cluster.classList.toggle('is-favorite');
         }
 
-        // Fetch & Build Comic Clouds
         function loadLibrary() {
             showView('library-view');
             const container = document.getElementById('cloudsContainer');
@@ -521,7 +545,6 @@
             });
         }
 
-        // Detailed View Popup
         function showDetails(item) {
             document.getElementById('m-word').innerText = item.word;
             document.getElementById('m-meaning').innerText = item.meaning || "---";
