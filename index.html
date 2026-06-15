@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ Vocab Comic Cloud ⚡</title>
+    <style>
+        :root {
+            --bg: #fdf6e2;
+            --primary: #ff7675;
+            --secondary: #55efc4;
+            --accent: #ffeaa7;
+            --dark: #2d3436;
+            --cloud-bg: #74b9ff;
+            --fav-cloud: #ff7675; /* Favorite cloud ka alag special color */
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Comic Sans MS', 'Chalkboard SE', cursive, sans-serif; }
+        
+        html { scroll-behavior: smooth; }
+
+        body { 
+            background-color: var(--bg); 
+            color: var(--dark); 
+            overflow-x: hidden;
+            background-image: radial-gradient(var(--accent) 15%, transparent 16%);
+            background-size: 20px 20px;
+        }
+
+        /* Comic Style Borders & Shadows */
+        .comic-box {
+            border: 3px solid var(--dark);
+            box-shadow: 5px 5px 0px var(--dark);
+            border-radius: 12px;
+        }
+
+        /* Floating Library Button */
+        .controls { position: fixed; top: 20px; right: 20px; z-index: 100; }
+        .btn-library { 
+            background: var(--secondary); 
+            color: var(--dark); 
+            padding: 12px 25px; 
+            font-weight: 900; 
+            font-size: 18px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-library:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0px var(--dark); }
+        .btn-library:active { transform: translate(3px, 3px); box-shadow: 2px 2px 0px var(--dark); }
+
+        /* Views */
+        .view { display: none; padding: 20px 20px; min-height: 100vh; }
+        .view.active { display: block; }
+
+        /* Welcome Screen with Giant Center Plus */
+        #home-view { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+            text-align: center; 
+        }
+        
+        .main-title {
+            font-size: 3.5rem;
+            text-transform: uppercase;
+            background: var(--primary);
+            padding: 10px 20px;
+            transform: rotate(-2deg);
+            margin-bottom: 50px;
+            display: inline-block;
+        }
+
+        .giant-plus {
+            width: 120px;
+            height: 120px;
+            background: var(--accent);
+            font-size: 70px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.2s;
+            user-select: none;
+        }
+        .giant-plus:hover {
+            transform: scale(1.1) rotate(90deg);
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Modal / Pop-up Form Container */
+        .modal-overlay { 
+            display: none; 
+            position: fixed; 
+            top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.7); 
+            z-index: 200; 
+            align-items: center; 
+            justify-content: center;
+        }
+        .modal-overlay.active { display: flex; }
+        
+        .form-container { 
+            background: white; 
+            width: 90%; 
+            max-width: 550px; 
+            padding: 30px; 
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .close-form {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 30px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: bold; font-size: 16px; text-transform: uppercase;}
+        .form-group input { 
+            width: 100%; padding: 12px; border-radius: 8px; 
+            border: 2px solid var(--dark); background: #fff; 
+            color: var(--dark); font-size: 16px; 
+        }
+        .form-group input:focus { background: var(--accent); outline: none; }
+
+        /* Tags Box Style */
+        .tags-input-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 8px;
+            border: 2px solid var(--dark);
+            background: white;
+            border-radius: 8px;
+            min-height: 45px;
+        }
+        .tags-input-container input {
+            border: none !important;
+            flex: 1;
+            padding: 4px !important;
+            min-width: 100px;
+        }
+        .tags-input-container input:focus { background: none; }
+        .tag-chip {
+            background: var(--accent);
+            border: 1.5px solid var(--dark);
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .tag-chip span { cursor: pointer; color: var(--primary); font-size: 16px; }
+
+        .btn-save {
+            width: 100%;
+            background: var(--cloud-bg);
+            padding: 15px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn-save:hover { background: #4a90e2; color: white; }
+
+        /* Library Section */
+        .clouds-grid { display: flex; flex-wrap: wrap; gap: 40px; justify-content: center; padding-top: 20px; }
+        
+        /* Interactive Priority Cloud Cluster */
+        .word-cloud-cluster { 
+            background: white; 
+            width: 320px; 
+            height: 320px; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            position: relative; 
+            cursor: pointer; 
+            transition: 0.3s; 
+            border: 3px solid var(--dark);
+            box-shadow: 8px 8px 0px rgba(0,0,0,0.15);
+            background-image: radial-gradient(#e0f0ff 20%, transparent 20%);
+            background-size: 10px 10px;
+        }
+        .word-cloud-cluster:hover { 
+            transform: scale(1.05) rotate(1deg); 
+            box-shadow: 12px 12px 0px var(--dark);
+        }
+
+        /* Favorite State Classes */
+        .word-cloud-cluster.is-favorite {
+            background-color: #ffe0e0;
+            background-image: radial-gradient(var(--primary) 15%, transparent 16%);
+            background-size: 12px 12px;
+            border-color: var(--primary);
+        }
+        .word-cloud-cluster.is-favorite .main-word {
+            background: var(--accent);
+            border-color: var(--primary);
+        }
+
+        /* Favorite Star Button */
+        .fav-star {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            font-size: 26px;
+            color: #ccc;
+            z-index: 15;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .fav-star:hover { transform: scale(1.2); }
+        .word-cloud-cluster.is-favorite .fav-star {
+            color: #f1c40f;
+            text-shadow: 2px 2px 0px var(--dark);
+        }
+        
+        .cloud-content { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+        .main-word { 
+            font-size: 32px; 
+            font-weight: 900; 
+            color: var(--dark); 
+            z-index: 10; 
+            text-align: center; 
+            max-width: 160px;
+            background: var(--secondary);
+            padding: 5px 10px;
+            border: 2px solid var(--dark);
+            transform: skewX(-5deg);
+        }
+        
+        /* Scatter Positioning with Priority Sizing */
+        .synonym-tag { position: absolute; font-weight: bold; white-space: nowrap; background: white; border: 1.5px solid var(--dark); padding: 2px 6px; border-radius: 4px; box-shadow: 2px 2px 0 var(--dark);}
+        
+        /* Priority positions */
+        .priority-0 { top: 45px; left: 50%; transform: translateX(-50%); font-size: 18px; background: var(--accent); z-index: 5; }
+        .priority-1 { bottom: 45px; left: 50%; transform: translateX(-50%); font-size: 16px; background: #ffbe76; z-index: 5; }
+        .priority-2 { left: 15px; top: 40%; font-size: 15px; }
+        .priority-3 { right: 15px; top: 55%; font-size: 14px; }
+        .priority-4 { top: 25px; left: 25px; font-size: 12px; opacity: 0.8; }
+        .priority-5 { bottom: 25px; right: 25px; font-size: 11px; opacity: 0.7; }
+
+        /* Detail Display Modal */
+        .detail-modal { 
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.8); z-index: 300; align-items: center; justify-content: center; 
+        }
+        .detail-modal.active { display: flex; }
+        .detail-content { 
+            background: #fff; width: 90%; max-width: 500px; padding: 35px; position: relative; 
+            transform: rotate(1deg); background-image: repeating-linear-gradient(#fff, #fff 24px, #e0f0ff 25px); line-height: 25px;
+        }
+        .detail-word { font-size: 36px; font-weight: 900; color: white; background: var(--primary); padding: 5px 15px; display: inline-block; margin-bottom: 20px; border: 3px solid var(--dark); box-shadow: 4px 4px 0 var(--dark); }
+        .detail-sec { margin-bottom: 20px; background: rgba(255,255,255,0.9); padding: 10px; border-radius: 8px; border: 2px solid var(--dark); }
+        .detail-label { font-size: 13px; font-weight: 900; text-transform: uppercase; color: #7f8c8d; margin-bottom: 5px; }
+        .detail-val { font-size: 18px; color: var(--dark); font-weight: bold; }
+
+        .loader { display: none; text-align: center; font-size: 22px; font-weight: bold; margin-top: 15px; padding: 20px; background: var(--accent); border: 3px dashed var(--dark); display: inline-block; }
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <button class="comic-box btn-library" onclick="loadLibrary()">📚 My Library</button>
+    </div>
+
+    <div id="home-view" class="view active">
+        <div class="comic-box main-title">Vocab Cloud Studio</div>
+        <p style="margin-bottom: 30px; font-size: 18px; font-weight: bold;">Click PLUS to unleash a new word! 👇</p>
+        <div class="comic-box giant-plus" onclick="openFormModal()">+</div>
+    </div>
+
+    <div id="formModal" class="modal-overlay" onclick="closeFormModal(event)">
+        <div class="comic-box form-container" onclick="event.stopPropagation()">
+            <span class="close-form" onclick="closeFormModal(null)">&times;</span>
+            <h2 style="margin-bottom: 25px; text-transform: uppercase; background: var(--accent); padding: 5px; display:inline-block;" class="comic-box">💥 Add New Word 💥</h2>
+            
+            <div class="form-group">
+                <label>Main Word (English)</label>
+                <input type="text" id="word" placeholder="e.g. Serendipity" required>
+            </div>
+            <div class="form-group">
+                <label>Meaning (Hindi / English / Mix)</label>
+                <input type="text" id="meaning" placeholder="e.g. Naseeb / Kismat se achhi cheez milna" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Synonyms (Type & press Enter or Comma)</label>
+                <div class="tags-input-container" id="synonymsContainer">
+                    <input type="text" id="synonymInput" placeholder="Add synonym...">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Antonyms (Type & press Enter or Comma)</label>
+                <div class="tags-input-container" id="antonymsContainer">
+                    <input type="text" id="antonymInput" placeholder="Add antonym...">
+                </div>
+            </div>
+
+            <button class="comic-box btn-save" onclick="saveWord()">⚡ SAVE TO CLOUD ⚡</button>
+            <div id="save-loader" class="loader" style="display:none;">BOOM! Saving your word... 🚀</div>
+        </div>
+    </div>
+
+    <div id="library-view" class="view">
+        <h2 style="text-align: center; margin-bottom: 20px; font-size: 32px;"><span style="background:var(--accent); padding: 5px 15px;" class="comic-box">☁️ YOUR VOCAB CLOUDS ☁️</span></h2>
+        <div style="text-align: center; margin-bottom: 20px;">
+            <div id="fetch-loader" class="loader" style="display: block;">Summoning your cloud kingdom... 🌩️</div>
+        </div>
+        <div class="clouds-grid" id="cloudsContainer"></div>
+    </div>
+
+    <div id="detailModal" class="detail-modal" onclick="closeDetailModal(event)">
+        <div class="comic-box detail-content" onclick="event.stopPropagation()">
+            <span class="close-form" onclick="document.getElementById('detailModal').classList.remove('active')">&times;</span>
+            <div class="detail-word" id="m-word">Word</div>
+            
+            <div class="detail-sec">
+                <div class="detail-label">💡 Meaning</div>
+                <div class="detail-val" id="m-meaning">...</div>
+            </div>
+            <div class="detail-sec">
+                <div class="detail-label">🤝 Synonyms (In Priority Order)</div>
+                <div class="detail-val" id="m-synonyms">...</div>
+            </div>
+            <div class="detail-sec">
+                <div class="detail-label">🥊 Antonyms</div>
+                <div class="detail-val" id="m-antonyms">...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCBluLaI9rqNSAsfW_6cdWCyZ1-0ARLNpsBGxpvSg_Vfub3wwk_2VoSeus0U0ecpdq/exec";
+        
+        let activeSynonyms = [];
+        let activeAntonyms = [];
+
+        // Local storage for keeping track of favorites across sessions
+        let favoritesList = JSON.parse(localStorage.getItem('vocab_favs')) || [];
+
+        function showView(viewId) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            const activeView = document.getElementById(viewId);
+            activeView.classList.add('active');
+            activeView.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function openFormModal() {
+            document.getElementById('formModal').classList.add('active');
+        }
+
+        function closeFormModal(e) {
+            if(!e || e.target === document.getElementById('formModal')) {
+                document.getElementById('formModal').classList.remove('active');
+            }
+        }
+
+        // Tags Setup Logic
+        function setupTagsSystem(inputId, containerId, targetArray) {
+            const input = document.getElementById(inputId);
+            const container = document.getElementById(containerId);
+
+            function renderTags() {
+                container.querySelectorAll('.tag-chip').forEach(chip => chip.remove());
+                targetArray.forEach((tag, index) => {
+                    const chip = document.createElement('div');
+                    chip.className = 'tag-chip';
+                    chip.innerHTML = `${tag} <span onclick="removeTag('${inputId}', ${index})">&times;</span>`;
+                    container.insertBefore(chip, input);
+                });
+            }
+
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ',') {
+                    e.preventDefault();
+                    let value = input.value.trim().replace(/,/g, '');
+                    if (value && !targetArray.includes(value)) {
+                        targetArray.push(value);
+                        input.value = '';
+                        renderTags();
+                    }
+                }
+            });
+
+            window.removeTag = function(inpId, index) {
+                if(inpId === 'synonymInput') {
+                    activeSynonyms.splice(index, 1);
+                    setupTagsSystem('synonymInput', 'synonymsContainer', activeSynonyms).render();
+                } else {
+                    activeAntonyms.splice(index, 1);
+                    setupTagsSystem('antonymInput', 'antonymsContainer', activeAntonyms).render();
+                }
+            }
+
+            return { render: renderTags };
+        }
+
+        const synSys = setupTagsSystem('synonymInput', 'synonymsContainer', activeSynonyms);
+        const antSys = setupTagsSystem('antonymInput', 'antonymsContainer', activeAntonyms);
+
+        // Save Word
+        function saveWord() {
+            const word = document.getElementById('word').value.trim();
+            const meaning = document.getElementById('meaning').value.trim();
+
+            if(!word || !meaning) {
+                alert("Oops! Word aur Meaning daalna bhool gaye kya? ✍️");
+                return;
+            }
+
+            document.getElementById('save-loader').style.display = 'inline-block';
+
+            const payload = { 
+                word, 
+                meaning, 
+                synonyms: activeSynonyms.join(', '), 
+                antonyms: activeAntonyms.join(', ') 
+            };
+
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            })
+            .then(() => {
+                document.getElementById('save-loader').style.display = 'none';
+                document.getElementById('word').value = '';
+                document.getElementById('meaning').value = '';
+                activeSynonyms = [];
+                activeAntonyms = [];
+                synSys.render();
+                antSys.render();
+                
+                closeFormModal(null);
+                loadLibrary();
+            })
+            .catch(err => {
+                console.error(err);
+                document.getElementById('save-loader').style.display = 'none';
+            });
+        }
+
+        // Toggle Favorite function
+        function toggleFavorite(e, word) {
+            e.stopPropagation(); // Prevents opening detail modal when clicking star
+            const index = favoritesList.indexOf(word);
+            if (index > -1) {
+                favoritesList.splice(index, 1);
+            } else {
+                favoritesList.push(word);
+            }
+            localStorage.setItem('vocab_favs', JSON.stringify(favoritesList));
+            
+            // Re-render to show updated colors instantly
+            const cluster = e.target.closest('.word-cloud-cluster');
+            cluster.classList.toggle('is-favorite');
+        }
+
+        // Fetch & Build Comic Clouds
+        function loadLibrary() {
+            showView('library-view');
+            const container = document.getElementById('cloudsContainer');
+            const loader = document.getElementById('fetch-loader');
+            container.innerHTML = '';
+            loader.style.display = 'inline-block';
+
+            fetch(SCRIPT_URL, { cache: 'no-store' })
+            .then(res => {
+                if (!res.ok) throw new Error('Error');
+                return res.json();
+            })
+            .then(data => {
+                loader.style.display = 'none';
+                if(data.length === 0) {
+                    container.innerHTML = "<p style='font-weight:bold; font-size:20px;'>Library khali hai! Jaldi se '+' daba kar ek cloud banao. ☁️</p>";
+                    return;
+                }
+
+                data.forEach((item) => {
+                    const synArray = item.synonyms ? item.synonyms.split(',') : [];
+                    const isFav = favoritesList.includes(item.word);
+                    
+                    let synHtml = '';
+                    synArray.slice(0, 6).forEach((syn, i) => {
+                        if(syn.trim() !== "") {
+                            synHtml += `<span class="synonym-tag priority-${i}">${syn.trim()}</span>`;
+                        }
+                    });
+
+                    const cloudHtml = `
+                        <div class="word-cloud-cluster ${isFav ? 'is-favorite' : ''}" onclick="showDetails(${JSON.stringify(item).replace(/"/g, '&quot;')})">
+                            <span class="fav-star" onclick="toggleFavorite(event, '${item.word.replace(/'/g, "\\'")}')">⭐</span>
+                            <div class="cloud-content">
+                                <div class="main-word">${item.word}</div>
+                                ${synHtml}
+                            </div>
+                        </div>
+                    `;
+                    container.innerHTML += cloudHtml;
+                });
+            })
+            .catch(err => {
+                loader.style.display = 'none';
+                container.innerHTML = "<p style='color:red; font-size:18px; font-weight:bold;'>Bad news! Network connection issue hai, please dobara try karein.</p>";
+                console.error(err);
+            });
+        }
+
+        // Detailed View Popup
+        function showDetails(item) {
+            document.getElementById('m-word').innerText = item.word;
+            document.getElementById('m-meaning').innerText = item.meaning || "---";
+            document.getElementById('m-synonyms').innerText = item.synonyms || "---";
+            document.getElementById('m-antonyms').innerText = item.antonyms || "---";
+            
+            document.getElementById('detailModal').classList.add('active');
+        }
+
+        function closeDetailModal(e) {
+            if(e.target === document.getElementById('detailModal')) {
+                document.getElementById('detailModal').classList.remove('active');
+            }
+        }
+    </script>
+</body>
+</html>
