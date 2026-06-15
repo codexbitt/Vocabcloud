@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>⚡ Vocab Comic Cloud ⚡</title>
+    <!-- Google Fonts link kiya hai jo har mobile me perfect chalega -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
         :root {
             --bg: #fdf6e2;
@@ -15,7 +20,14 @@
             --fav-cloud: #ff7675;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Comic Sans MS', 'Chalkboard SE', cursive, sans-serif; }
+        /* Pure app ka font set kar diya */
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Fredoka', sans-serif; 
+        }
+        
         html { scroll-behavior: smooth; }
         
         body { 
@@ -32,7 +44,7 @@
             border-radius: 12px;
         }
 
-        /* Responsive Top Controls */
+        /* Controls styling */
         .controls { 
             position: fixed; 
             top: 12px; 
@@ -43,10 +55,11 @@
             background: var(--secondary); 
             color: var(--dark); 
             padding: 10px 18px; 
-            font-weight: 900; 
+            font-weight: 700; 
             font-size: 15px;
             cursor: pointer;
             transition: 0.2s;
+            text-transform: uppercase;
         }
         @media(min-width: 600px) {
             .controls { top: 20px; right: 20px; }
@@ -56,15 +69,29 @@
         .view { display: none; padding: 15px; min-height: 100vh; }
         .view.active { display: block; }
 
-        /* Welcome Section responsive typography */
+        /* Main Title with Comic/Pop-art style font */
         #home-view { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center; padding: 10px; }
-        .main-title { font-size: 2.2rem; text-transform: uppercase; background: var(--primary); padding: 8px 15px; transform: rotate(-2deg); margin-bottom: 40px; display: inline-block; max-width: 95%; word-wrap: break-word; }
-        @media(min-width: 600px) { .main-title { font-size: 3.5rem; margin-bottom: 50px; } }
+        .main-title { 
+            font-family: 'Bangers', cursive;
+            font-size: 3.5rem; 
+            letter-spacing: 2px;
+            text-transform: uppercase; 
+            background: var(--primary); 
+            color: white;
+            text-shadow: 3px 3px 0px var(--dark);
+            padding: 10px 25px; 
+            transform: rotate(-2deg); 
+            margin-bottom: 30px; 
+            display: inline-block; 
+            max-width: 95%; 
+            word-wrap: break-word; 
+        }
+        @media(min-width: 600px) { .main-title { font-size: 5rem; margin-bottom: 40px; } }
         
         .giant-plus { width: 100px; height: 100px; background: var(--accent); font-size: 60px; font-weight: bold; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; user-select: none; }
         .giant-plus:hover { transform: scale(1.1) rotate(90deg); background: var(--primary); color: white; }
 
-        /* Fully Responsive Modal Layouts */
+        /* Modals layout */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 200; align-items: center; justify-content: center; padding: 10px; }
         .modal-overlay.active { display: flex; }
         .form-container { background: white; width: 100%; max-width: 550px; padding: 20px; max-height: 92vh; overflow-y: auto; position: relative; }
@@ -73,21 +100,21 @@
         .close-form { position: absolute; top: 12px; right: 15px; font-size: 28px; cursor: pointer; font-weight: bold; z-index: 10; }
 
         .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; text-transform: uppercase;}
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 700; font-size: 14px; text-transform: uppercase;}
         .form-group input { width: 100%; padding: 10px; border-radius: 8px; border: 2px solid var(--dark); background: #fff; color: var(--dark); font-size: 15px; }
         .form-group input:focus { background: var(--accent); outline: none; }
 
         .tags-input-container { display: flex; flex-wrap: wrap; gap: 6px; padding: 6px; border: 2px solid var(--dark); background: white; border-radius: 8px; min-height: 45px; }
         .tags-input-container input { border: none !important; flex: 1; padding: 4px !important; min-width: 80px; }
-        .tag-chip { background: var(--accent); border: 1.5px solid var(--dark); padding: 3px 8px; border-radius: 20px; display: flex; align-items: center; gap: 5px; font-size: 13px; font-weight: bold; }
+        .tag-chip { background: var(--accent); border: 1.5px solid var(--dark); padding: 3px 8px; border-radius: 20px; display: flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 700; }
 
-        .btn-save { width: 100%; background: var(--cloud-bg); padding: 12px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .btn-save { width: 100%; background: var(--cloud-bg); padding: 12px; font-size: 18px; font-weight: 700; cursor: pointer; margin-top: 10px; text-transform: uppercase; }
 
-        /* Responsive Clouds Grid Layout */
+        /* Clouds Grid Layout */
         .clouds-grid { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; padding-top: 60px; }
         @media(min-width: 600px) { .clouds-grid { gap: 40px; padding-top: 20px; } }
         
-        /* Auto Scaled Mobile-First Clouds */
+        /* Cloud Cluster scaling */
         .word-cloud-cluster { 
             background: white; 
             width: 280px; 
@@ -114,45 +141,59 @@
         .word-cloud-cluster.is-favorite .fav-star { color: #f1c40f; text-shadow: 2px 2px 0px var(--dark); }
         
         .cloud-content { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
-        .main-word { font-size: 24px; font-weight: 900; color: var(--dark); z-index: 10; text-align: center; max-width: 140px; background: var(--secondary); padding: 5px 8px; border: 2px solid var(--dark); transform: skewX(-5deg); word-wrap: break-word; }
-        @media(min-width: 600px) { .main-word { font-size: 32px; max-width: 160px; padding: 5px 10px; } }
         
-        /* Scatter tags positioning mobile adjustments */
-        .synonym-tag { position: absolute; font-weight: bold; white-space: nowrap; background: white; border: 1.5px solid var(--dark); padding: 1px 5px; border-radius: 4px; box-shadow: 1.5px 1.5px 0 var(--dark); font-size: 12px; }
-        @media(min-width: 600px) { .synonym-tag { padding: 2px 6px; box-shadow: 2px 2px 0 var(--dark); } }
+        /* Main Cloud Word Tuning */
+        .main-word { 
+            font-size: 22px; 
+            font-weight: 700; 
+            color: var(--dark); 
+            z-index: 10; 
+            text-align: center; 
+            max-width: 140px; 
+            background: var(--secondary); 
+            padding: 5px 12px; 
+            border: 2px solid var(--dark); 
+            transform: skewX(-5deg); 
+            word-wrap: break-word; 
+        }
+        @media(min-width: 600px) { .main-word { font-size: 28px; max-width: 160px; } }
         
-        .priority-0 { top: 35px; left: 50%; transform: translateX(-50%); font-size: 15px; background: var(--accent); z-index: 5; }
-        .priority-1 { bottom: 35px; left: 50%; transform: translateX(-50%); font-size: 14px; background: #ffbe76; z-index: 5; }
-        .priority-2 { left: 10px; top: 40%; font-size: 13px; }
-        .priority-3 { right: 10px; top: 55%; font-size: 12px; }
-        .priority-4 { top: 20px; left: 20px; font-size: 11px; opacity: 0.8; }
-        .priority-5 { bottom: 20px; right: 20px; font-size: 10px; opacity: 0.7; }
+        /* Synonym layout */
+        .synonym-tag { position: absolute; font-weight: 700; white-space: nowrap; background: white; border: 1.5px solid var(--dark); padding: 1px 5px; border-radius: 4px; box-shadow: 1.5px 1.5px 0 var(--dark); font-size: 11px; }
+        @media(min-width: 600px) { .synonym-tag { padding: 2px 6px; box-shadow: 2px 2px 0 var(--dark); font-size: 13px; } }
+        
+        .priority-0 { top: 35px; left: 50%; transform: translateX(-50%); background: var(--accent); z-index: 5; }
+        .priority-1 { bottom: 35px; left: 50%; transform: translateX(-50%); background: #ffbe76; z-index: 5; }
+        .priority-2 { left: 10px; top: 40%; }
+        .priority-3 { right: 10px; top: 55%; }
+        .priority-4 { top: 20px; left: 20px; opacity: 0.8; }
+        .priority-5 { bottom: 20px; right: 20px; opacity: 0.7; }
         
         @media(min-width: 600px) {
-            .priority-0 { top: 45px; font-size: 18px; }
-            .priority-1 { bottom: 45px; font-size: 16px; }
-            .priority-2 { left: 15px; font-size: 15px; }
-            .priority-3 { right: 15px; font-size: 14px; }
-            .priority-4 { top: 25px; left: 25px; font-size: 12px; }
-            .priority-5 { bottom: 25px; right: 25px; font-size: 11px; }
+            .priority-0 { top: 45px; }
+            .priority-1 { bottom: 45px; }
+            .priority-2 { left: 15px; }
+            .priority-3 { right: 15px; }
+            .priority-4 { top: 25px; left: 25px; }
+            .priority-5 { bottom: 25px; right: 25px; }
         }
 
-        /* Detail Modal Responsive Tuning */
+        /* Detail Modal */
         .detail-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 300; align-items: center; justify-content: center; padding: 12px; }
         .detail-modal.active { display: flex; }
         .detail-content { background: #fff; width: 100%; max-width: 500px; padding: 25px; position: relative; max-height: 90vh; overflow-y: auto; transform: rotate(0.5deg); background-image: repeating-linear-gradient(#fff, #fff 24px, #e0f0ff 25px); line-height: 25px; }
         @media(min-width: 600px) { .detail-content { padding: 35px; transform: rotate(1deg); } }
         
-        .detail-word { font-size: 26px; font-weight: 900; color: white; background: var(--primary); padding: 5px 12px; display: inline-block; margin-bottom: 15px; border: 3px solid var(--dark); box-shadow: 3px 3px 0 var(--dark); max-width: 90%; word-wrap: break-word; }
-        @media(min-width: 600px) { .detail-word { font-size: 36px; padding: 5px 15px; margin-bottom: 20px; box-shadow: 4px 4px 0 var(--dark); } }
+        .detail-word { font-family: 'Bangers', cursive; font-size: 32px; letter-spacing: 1px; color: white; background: var(--primary); padding: 5px 15px; display: inline-block; margin-bottom: 15px; border: 3px solid var(--dark); box-shadow: 3px 3px 0 var(--dark); max-width: 90%; word-wrap: break-word; text-shadow: 2px 2px 0px var(--dark); }
+        @media(min-width: 600px) { .detail-word { font-size: 42px; margin-bottom: 20px; box-shadow: 4px 4px 0 var(--dark); } }
         
         .detail-sec { margin-bottom: 15px; background: rgba(255,255,255,0.9); padding: 10px; border-radius: 8px; border: 2px solid var(--dark); }
-        .detail-label { font-size: 12px; font-weight: 900; text-transform: uppercase; color: #7f8c8d; margin-bottom: 3px; }
-        .detail-val { font-size: 16px; color: var(--dark); font-weight: bold; word-wrap: break-word; }
+        .detail-label { font-size: 12px; font-weight: 700; text-transform: uppercase; color: #7f8c8d; margin-bottom: 3px; }
+        .detail-val { font-size: 16px; color: var(--dark); font-weight: 700; word-wrap: break-word; }
 
-        /* Responsive Inline Input Fields */
-        .editable-input { width: 100%; padding: 8px; font-size: 15px; font-weight: bold; border: 2px dashed var(--primary); background: #fffdf3; margin-top: 5px; border-radius: 6px; }
-        .btn-edit-toggle { background: var(--accent); color: var(--dark); padding: 6px 12px; font-size: 14px; font-weight: bold; cursor: pointer; float: right; margin-top: -5px; margin-right: 15px; }
+        /* Inline Input Fields */
+        .editable-input { width: 100%; padding: 8px; font-size: 15px; font-weight: 700; border: 2px dashed var(--primary); background: #fffdf3; margin-top: 5px; border-radius: 6px; }
+        .btn-edit-toggle { background: var(--accent); color: var(--dark); padding: 6px 12px; font-size: 14px; font-weight: 700; cursor: pointer; float: right; margin-top: -5px; margin-right: 15px; text-transform: uppercase; }
         @media(min-width: 600px) { .btn-edit-toggle { padding: 8px 15px; font-size: 16px; margin-top: -10px; margin-right: 20px; } }
 
         .loader { display: none; text-align: center; font-size: 18px; font-weight: bold; margin-top: 15px; padding: 15px; background: var(--accent); border: 3px dashed var(--dark); display: inline-block; width: 100%; }
@@ -166,10 +207,11 @@
 
     <div id="home-view" class="view active">
         <div class="comic-box main-title">Vocab Cloud Studio</div>
-        <p style="margin-bottom: 30px; font-size: 16px; font-weight: bold; padding: 0 10px;">Click PLUS to unleash a new word! 👇</p>
+        <p style="margin-bottom: 30px; font-size: 16px; font-weight: 700; padding: 0 10px; text-transform: uppercase;">Click PLUS to unleash a new word! 👇</p>
         <div class="comic-box giant-plus" onclick="openFormModal()">+</div>
     </div>
 
+    <!-- Input Form Modal -->
     <div id="formModal" class="modal-overlay" onclick="closeFormModal(event)">
         <div class="comic-box form-container" onclick="event.stopPropagation()">
             <span class="close-form" onclick="closeFormModal(null)">&times;</span>
@@ -203,14 +245,16 @@
         </div>
     </div>
 
+    <!-- Library View -->
     <div id="library-view" class="view">
-        <h2 style="text-align: center; margin-bottom: 15px; font-size: 24px; padding-top: 40px;"><span style="background:var(--accent); padding: 5px 12px;" class="comic-box">☁️ YOUR CLOUDS ☁️</span></h2>
+        <h2 style="text-align: center; margin-bottom: 15px; font-size: 24px; padding-top: 40px;"><span style="background:var(--accent); padding: 5px 12px; text-transform: uppercase;" class="comic-box">☁️ Your Clouds ☁️</span></h2>
         <div style="text-align: center; margin-bottom: 15px;">
             <div id="fetch-loader" class="loader" style="display: block;">Summoning your cloud kingdom... 🌩️</div>
         </div>
         <div class="clouds-grid" id="cloudsContainer"></div>
     </div>
 
+    <!-- Details & Edit Modal -->
     <div id="detailModal" class="detail-modal" onclick="closeDetailModal(event)">
         <div class="comic-box detail-content" onclick="event.stopPropagation()">
             <span class="close-form" onclick="document.getElementById('detailModal').classList.remove('active')">&times;</span>
@@ -344,6 +388,7 @@
             .catch(err => console.error(err));
         }
 
+        // Toggle Favorite sync functionality
         function toggleFavorite(e, word) {
             e.stopPropagation();
             const index = favoritesList.indexOf(word);
